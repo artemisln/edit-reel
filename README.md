@@ -1,6 +1,8 @@
+
+
 # Greek Reel Video Editor — Artemis Codes
 
-[![ClawHub](https://img.shields.io/badge/ClawHub-edit--greek--reel-blue)](https://clawhub.ai/artemisln/edit-greek-reel)
+[![ClawHub](https://img.shields.io/badge/ClawHub/edit--greek--reel-blue)](https://clawhub.ai/artemisln/edit-greek-reel)
 
 A Claude Code custom skill that turns raw talking-head videos into polished Instagram Reels / TikToks with karaoke-style subtitles. Supports any language — just point it at your video and go.
 
@@ -146,6 +148,7 @@ edit-greek-reel/
 - If Whisper gets a word wrong, the skill will ask you before proceeding
 - For best subtitle timing, speak clearly with brief pauses between sentences
 - Add tool logos to `images/` if you're reviewing or mentioning specific tools
+- Transcripts are cached in `transcript.json` — re-running on the same video skips Whisper to save time.
 
 ## Credits
 
