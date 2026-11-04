@@ -1,10 +1,14 @@
 # edit-reel
 
-Claude skills that turn raw talking-head footage into finished Instagram Reels, TikToks and
-YouTube Shorts. Word-by-word karaoke subtitles in any language (English, Greek, Spanish, ...),
-silence and retakes cut, subtle zooms, sound effects and image overlays. Plus the skills around
-the edit: trimming messy raw footage, recording product demos, building a playback video to film,
-and planning the shoot.
+I post to 27k followers and haven't edited a video by hand in 8 months. I film, Claude edits,
+and my time goes to ideas and filming. These are the skills I use, made generic so they work for you.
+
+<p align="center"><img src="assets/before-after.gif" alt="Side by side: a 16 second raw take with a false start and long silences played at 2x, next to the same line after edit-reel, 6 seconds with word-by-word Greek subtitles" width="556"></p>
+
+Word-by-word karaoke subtitles in any language (English, Greek, Spanish, ...), silence and
+retakes cut, subtle zooms, sound effects and image overlays. Plus the skills around the edit:
+trimming messy raw footage, recording product demos, building a playback video to film, and
+planning the shoot.
 
 Formerly `edit-greek-reel`. It always worked in any language, so the name caught up.
 
