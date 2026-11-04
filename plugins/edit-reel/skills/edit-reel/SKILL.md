@@ -1,10 +1,10 @@
 ---
-name: edit-greek-reel
-description: Edit a raw talking-head video into a polished short-form reel with karaoke subtitles. Trims silence, adds Manrope Bold subtitles, zoom effects, SFX, and image overlays. Supports any language. Usage - /edit-greek-reel <path-to-video> [options]
+name: edit-reel
+description: Edit a raw talking-head video into a polished short-form reel (Instagram Reels, TikTok, YouTube Shorts) with word-by-word karaoke subtitles in any language, including English and Greek. Trims silence and retakes, crops to 9:16, adds subtle zooms, sound effects and image overlays. Use when someone wants to edit a reel, add subtitles to a talking-head video, or turn raw footage into a short. Usage - /edit-reel <path-to-video> [options]
 argument-hint: <path-to-video.MOV> [--lang en] [--crop-top 20] [--no-images] [--manual-text "your script here"]
 ---
 
-# Greek Reel Video Editor — Artemis Codes
+# Reel Editor
 
 You are a senior short-form video editor. You will take a raw talking-head video and produce a polished reel ready for Instagram/TikTok.
 
@@ -13,14 +13,14 @@ You are a senior short-form video editor. You will take a raw talking-head video
 ## Pipeline Overview
 
 The editing pipeline has 3 passes:
-1. **Trim + Crop + Scale** — Cut silence, remove retakes, crop to 9:16 (object-cover, never stretch)
-2. **Subtitles + Zoom + Image Overlays** — Burn karaoke-style subs, add subtle zooms and logo/image overlays
-3. **Mix SFX** — Layer sound effects on key moments
+1. **Trim + Crop + Scale**: Cut silence, remove retakes, crop to 9:16 (object-cover, never stretch)
+2. **Subtitles + Zoom + Image Overlays**: Burn karaoke-style subs, add subtle zooms and logo/image overlays
+3. **Mix SFX**: Layer sound effects on key moments
 
 ## Step 1: Analyze the Video
 
 1. Run `ffprobe` to get resolution, duration, rotation, codec info
-2. Check orientation — if rotation is 90/270, the video is portrait (swap w/h)
+2. Check orientation: if rotation is 90/270, the video is portrait (swap w/h)
 3. Detect silence gaps with: `ffmpeg -i <input> -vn -af "silencedetect=noise=-30dB:d=0.5" -f null -`
 
 ## Step 2: Transcribe
@@ -30,11 +30,11 @@ The editing pipeline has 3 passes:
 If the user provided `--lang <code>` (e.g., `--lang en`, `--lang el`, `--lang es`), use that language code directly.
 
 Otherwise, **ask the user** which language the video is in before transcribing. Common options:
-- `en` — English
-- `el` — Greek
-- `es` — Spanish
-- `fr` — French
-- `de` — German
+- `en`: English
+- `el`: Greek
+- `es`: Spanish
+- `fr`: French
+- `de`: German
 
 The user can also type any [Whisper language code](https://github.com/openai/whisper#available-models-and-languages).
 
@@ -49,7 +49,7 @@ model = whisper.load_model("medium")
 print("Model ready.")
 ```
 
-Run this in a script with a generous timeout (5+ minutes). If the download fails or times out, retry — the download resumes from where it left off.
+Run this in a script with a generous timeout (5+ minutes). If the download fails or times out, retry, the download resumes from where it left off.
 
 ### 2c. Transcribe
 
@@ -62,7 +62,7 @@ Save transcript to `transcript.json` in the same directory. Print the full trans
 ## Step 3: Proofread the Transcription
 
 **CRITICAL**: Whisper makes mistakes, especially with:
-- Brand/tool names in any language (e.g., "Cloud Code" → "Claude Code", "CacheSource" → "Cursor", "Artemis Coe" → "Artemis Codes")
+- Brand/tool names in any language (e.g., "Cloud Code" → "Claude Code", "CacheSource" → "Cursor", "Super Base" → "Supabase")
 - Homophones and near-misses (e.g., "lucky" → "lowkey", "dragon" → "dragging")
 - Spelling errors in the target language
 - Merged or split words
@@ -75,13 +75,13 @@ If the user provides `--manual-text`, use their exact text instead of Whisper's 
 
 Based on the silence detection and word timestamps:
 
-1. Define `KEEP_SEGMENTS` — list of `(start, end)` tuples of audio to keep
+1. Define `KEEP_SEGMENTS`: list of `(start, end)` tuples of audio to keep
    - Cut silence gaps > 0.5s between sentences
    - When the speaker repeats themselves, keep only the LAST take
-   - Use tight boundaries — end segments right when speech ends, don't include trailing silence
+   - Use tight boundaries: end segments right when speech ends, don't include trailing silence
    - Start segments just before speech begins (~0.05s padding)
 
-2. Define `TIMED_WORDS` — list of `(word, start, end)` with the CORRECTED text mapped to Whisper timestamps
+2. Define `TIMED_WORDS`: list of `(word, start, end)` with the CORRECTED text mapped to Whisper timestamps
 
 3. Recalculate all timestamps relative to the trimmed output
 
@@ -99,34 +99,33 @@ Based on the silence detection and word timestamps:
 
 ### Zoom Effects (Subtle)
 - Maximum 5 zoom triggers per video
-- Zoom factor: 1.08–1.10x (never more than 1.12x — avoid making viewer dizzy)
+- Zoom factor: 1.08–1.10x (never more than 1.12x: avoid making viewer dizzy)
 - Duration: 0.35–0.45s per zoom
 - Easing: Ease-in (sqrt) to peak at 30%, ease-out (quadratic) to end
 - Trigger on: Key reveals, surprising numbers, strong statements, CTAs
 
 ### Sound Effects
 - **NEVER repeat the same SFX file twice in one video**
-- This skill ships with pre-trimmed SFX in its `audios/` directory (relative to this skill.md file):
-  - `trimmed_whoosh.mp3` — transitions, reveals
-  - `trimmed_cash.mp3` — money/price mentions
-  - `trimmed_fah.mp3` — emphasis, strong statements
-  - `trimmed_click.mp3` — tool mentions
-  - `trimmed_bubble_pop.mp3` — light reveals
-  - `trimmed_riser.mp3` — builds, anticipation
-- **Locating the SFX files** — check these locations in order:
-  1. The skill's base directory `audios/` folder (provided at invocation as `Base directory for this skill: <path>`)
-  2. The video's parent directory for an `audios/` folder (user may have added custom SFX there)
-  3. **If audios/ is missing** (e.g., package managers like ClawHub may not include binary assets): download them from the repository:
-     ```bash
-     REPO_URL="https://raw.githubusercontent.com/artemisln/edit-greek-reel/main/audios"
-     SKILL_DIR="<skill base directory>"
-     mkdir -p "$SKILL_DIR/audios"
-     for f in trimmed_whoosh.mp3 trimmed_cash.mp3 trimmed_fah.mp3 trimmed_click.mp3 trimmed_bubble_pop.mp3 trimmed_riser.mp3; do
-       curl -sL "$REPO_URL/$f" -o "$SKILL_DIR/audios/$f"
-     done
-     ```
-     On Windows, use Python `urllib` instead of `curl`.
-- Also check the video's parent directory for an `audios/` folder — the user may have added custom SFX there
+- This skill ships with SFX in `${CLAUDE_SKILL_DIR}/audios/` (the `audios/` folder next to this SKILL.md). Pick by meaning:
+  - `trimmed_whoosh.mp3`: transitions, reveals
+  - `trimmed_cash.mp3`: money, prices
+  - `trimmed_fah.mp3`: emphasis, strong statements (comedic, skip on serious videos)
+  - `trimmed_click.mp3`: tool mentions
+  - `trimmed_bubble_pop.mp3`: light reveals
+  - `trimmed_riser.mp3`: builds, anticipation
+  - `sfx_pop.mp3`, `sfx_thock.mp3`: small soft accents under a word
+  - `sfx_swish.mp3`: soft transition
+  - `sfx_thud.mp3`, `sfx_subdrop.mp3`: weight on a big statement or a number
+  - `sfx_shimmer.mp3`: something new, magical, "look at this"
+  - `sfx_rise.mp3`: build before a reveal (starts 1.4s before the word)
+  - `sfx_ding.mp3`, `sfx_success.mp3`, `sfx_fanfare.mp3`: correct, done, a win
+  - `sfx_buzzer.mp3`, `sfx_alert.mp3`, `sfx_undo.mp3`: wrong, warning, a mistake
+  - `sfx_tick.mp3`: countdowns, deadlines
+  - `sfx_swoop_up.mp3`: something going up (growth, a level up)
+  The `sfx_*` files are generated by `${CLAUDE_SKILL_DIR}/scripts/make-sfx.py` (CC0). If the folder is ever missing them, run that script.
+- **Locating SFX**, in this order:
+  1. `${CLAUDE_SKILL_DIR}/audios/` (bundled)
+  2. An `audios/` folder next to the video (the user's own SFX win when they match the moment)
 - If new untrimmed audio files exist, trim leading silence first:
   ```
   ffmpeg -i input.mp3 -ss <silence_end> -acodec libmp3lame -q:a 2 trimmed_output.mp3
@@ -135,7 +134,12 @@ Based on the silence detection and word timestamps:
 - Trigger on: Tool names, key numbers, strong moments, transitions
 
 ### Image Overlays
-- Check `images/` directory for available logos, screenshots, memes
+- Image sources, in this order:
+  1. A folder the user names in the command, plus its `images/` subfolder.
+  2. An `images/` folder next to the video.
+  3. An asset library the user keeps for all their reels, if they mention one (for example `~/Movies/assets/`). Ask for its path once; use it when the user says "find an asset that fits" or mentions a tool that has a matching file (e.g. `cursor.png`).
+- Prefer the user's folder over the library when both have a match.
+- List the images you plan to use before burning them in, so the user can confirm or swap.
 - Display above the speaker's head area (centered, ~15% from top)
 - Logo size: 200px max
 - Meme/screenshot size: 500px max
@@ -180,13 +184,13 @@ Based on the silence detection and word timestamps:
 
 ## Important Rules
 
-1. **Never stretch video** — always crop to fit (object-cover behavior)
-2. **Proofread before burning subtitles** — Whisper WILL get tool names wrong
+1. **Never stretch video**: always crop to fit (object-cover behavior)
+2. **Proofread before burning subtitles**: Whisper WILL get tool names wrong
 3. **Ask the user** if unsure about a word, especially brand/tool names
-4. **Sentence case only** — never ALL CAPS subtitles
-5. **No background pill** behind subtitles — outline only
-6. **Unique SFX** — never use the same sound file twice in one video
-7. **Subtle zooms** — 1.08-1.10x max, 5 per video max
-8. **Tight cuts** — trim silence aggressively, the reel should feel fast-paced
-9. **Cache transcript** — if `transcript.json` exists, reuse it (skip re-transcription)
-10. **Keep the last take** — when the speaker repeats, always keep the final version
+4. **Sentence case only**: never ALL CAPS subtitles
+5. **No background pill** behind subtitles: outline only
+6. **Unique SFX**: never use the same sound file twice in one video
+7. **Subtle zooms**: 1.08-1.10x max, 5 per video max
+8. **Tight cuts**: trim silence aggressively, the reel should feel fast-paced
+9. **Cache transcript**: if `transcript.json` exists, reuse it (skip re-transcription)
+10. **Keep the last take**: when the speaker repeats, always keep the final version

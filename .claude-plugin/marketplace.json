@@ -1,0 +1,19 @@
+{
+  "name": "artemis-codes",
+  "owner": {
+    "name": "Artemis Leonardou",
+    "url": "https://github.com/artemisln"
+  },
+  "metadata": {
+    "description": "Short-form video skills for Claude: edit reels with karaoke subtitles in any language, trim raw footage, capture product demos, plan shoots."
+  },
+  "plugins": [
+    {
+      "name": "edit-reel",
+      "source": "./plugins/edit-reel",
+      "description": "Turn raw talking-head footage into finished Reels, TikToks and Shorts: trimming, karaoke subtitles in any language, zooms, SFX, demo capture and shot lists.",
+      "category": "productivity",
+      "keywords": ["video", "reels", "tiktok", "shorts", "subtitles", "ffmpeg", "whisper", "content-creation"]
+    }
+  ]
+}

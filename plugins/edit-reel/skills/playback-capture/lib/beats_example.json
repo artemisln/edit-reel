@@ -1,0 +1,17 @@
+{
+  "output": "playback.mp4",
+  "width": null,
+  "height": null,
+  "fps": 30,
+  "black": 1.5,
+  "beats": [
+    {"label": "B1 hook",    "src": "recording-2.mov", "in": 20.5, "duration": 5.0, "line": "I didn't make this presentation..."},
+    {"label": "B2 open",    "src": "recording-1.mov", "in": 0.3,  "duration": 4.0, "line": "Open the site"},
+    {"label": "B3 topic",   "src": "recording-1.mov", "in": 11.5, "duration": 4.5, "line": "Type the topic in one line"},
+    {"label": "B4 style",   "src": "recording-1.mov", "in": 23.0, "duration": 5.5, "line": "Pick the style and the model"},
+    {"label": "B5a wait",   "src": "recording-1.mov", "in": 38.0, "duration": 2.5, "line": "Wait a couple of minutes..."},
+    {"label": "B5b result", "src": "recording-2.mov", "in": 33.0, "duration": 3.5, "line": "...and it comes back with the result"},
+    {"label": "B6a before", "src": "recording-2.mov", "in": 68.0, "duration": 3.0, "line": "Then you ask for changes..."},
+    {"label": "B6b after",  "src": "recording-3.mov", "in": 1.0,  "duration": 3.5, "line": "...and it makes them"}
+  ]
+}
