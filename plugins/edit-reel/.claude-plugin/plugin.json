@@ -1,0 +1,13 @@
+{
+  "name": "edit-reel",
+  "version": "2.0.0",
+  "description": "Short-form video toolkit: edit raw talking-head footage into reels with word-by-word subtitles in any language (English, Greek, ...), trim retakes, capture web demos, build playback videos and shot lists.",
+  "author": {
+    "name": "Artemis Leonardou",
+    "url": "https://github.com/artemisln"
+  },
+  "homepage": "https://github.com/artemisln/edit-reel",
+  "repository": "https://github.com/artemisln/edit-reel",
+  "license": "MIT",
+  "keywords": ["video", "reels", "tiktok", "shorts", "subtitles", "karaoke", "ffmpeg", "whisper", "greek"]
+}

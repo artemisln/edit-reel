@@ -1,156 +1,125 @@
-# Greek Reel Video Editor — Artemis Codes
+# edit-reel
 
-[![ClawHub](https://img.shields.io/badge/ClawHub-edit--greek--reel-blue)](https://clawhub.ai/artemisln/edit-greek-reel)
+Claude skills that turn raw talking-head footage into finished Instagram Reels, TikToks and
+YouTube Shorts. Word-by-word karaoke subtitles in any language (English, Greek, Spanish, ...),
+silence and retakes cut, subtle zooms, sound effects and image overlays. Plus the skills around
+the edit: trimming messy raw footage, recording product demos, building a playback video to film,
+and planning the shoot.
 
-A Claude Code custom skill that turns raw talking-head videos into polished Instagram Reels / TikToks with karaoke-style subtitles. Supports any language — just point it at your video and go.
+Formerly `edit-greek-reel`. It always worked in any language, so the name caught up.
 
-**Install instantly via ClawHub:**
-```bash
-clawhub install edit-greek-reel
+## Install
+
+### Claude Code (terminal, desktop app Code tab, IDE)
+
+```
+/plugin marketplace add artemisln/edit-reel
+/plugin install edit-reel@artemis-codes
 ```
 
-## What it does
+Then run `/edit-reel:edit-reel <video>` or just ask: "edit this reel: ~/Movies/raw.MOV".
 
-- **Transcribes** your video using OpenAI Whisper (with automatic proofreading)
-- **Trims silence** and dead air between sentences
-- **Removes retakes** — keeps only your last take when you repeat yourself
-- **Burns karaoke-style subtitles** — word-by-word highlight in Manrope Bold
-- **Adds subtle zoom effects** on key moments (1.08-1.10x, not dizzy-inducing)
-- **Overlays images/logos** above your head when you mention tools or brands
-- **Mixes sound effects** — whoosh, cash register, pop, etc. on key words
-- **Crops to 9:16** (object-cover, never stretches your video)
+### Claude app (claude.ai, desktop, mobile)
 
-## Before / After
+Customize › Plugins › Add › Add marketplace › `artemisln/edit-reel`, then turn on **edit-reel**.
+The skills show up under Customize › Skills. Turn on "Code execution and file creation" in
+settings. The chat sandbox may not have ffmpeg or Whisper available, so Claude Code on your own
+machine is the reliable way to render.
 
-| | Before | After |
+### Manual
+
+```bash
+git clone https://github.com/artemisln/edit-reel.git
+cp -r edit-reel/plugins/edit-reel/skills/* ~/.claude/skills/
+```
+
+Manual install gives you the short commands (`/edit-reel`, `/trim-raw-video`, ...).
+
+## Requirements
+
+- Python 3.10+ and ffmpeg (`brew install ffmpeg` on macOS, `choco install ffmpeg` on Windows)
+- `pip install openai-whisper Pillow cairosvg`
+- [Manrope](https://fonts.google.com/specimen/Manrope) font, Bold weight
+- The Whisper medium model (~1.5 GB) downloads on first use
+
+Skills with extra needs list them at the top of their own `SKILL.md` (for example Playwright for
+`demo-reel-capture`).
+
+## Skills
+
+| Skill | What it does | Example |
 |---|---|---|
-| Duration | 90s raw footage | ~38s tight edit |
-| Subtitles | None | Karaoke-style, sentence case |
-| Silence | 50+ seconds of gaps | Cut to zero |
-| Effects | None | Zooms, SFX, image overlays |
+| **edit-reel** | Raw talking head to finished 9:16 reel: transcribe, cut silence and retakes, karaoke subtitles, zooms, SFX, image overlays. | `/edit-reel ~/raw.MOV --lang en` |
+| **trim-raw-video** | Very raw footage with retakes, crew chatter and false starts: keeps the clearest take of every line and splices one clean cut. | `/trim-raw-video ~/shoot/*.MOV` |
+| **playback-capture** | Joins screen recordings into one continuous playback video, padded to fit your voiceover, so you can film your screen in a single take. | `/playback-capture ~/recordings/ script.md` |
+| **demo-reel-capture** | Claude drives Chrome with Playwright and records a clean product demo (no extension overlay, no tabs, no Dock), then pairs it with your talking head. | `/demo-reel-capture https://example.com` |
+| **sponsored-reel** | Edit style for sponsored reels: picture recut without touching the voiceover, pill captions, glowing hook title, measured SFX levels, optional bilingual subtitles. | `/sponsored-reel ~/cut.mp4` |
+| **shot-list** | Turns an approved script or a reference video into a shot list you can film without making a single decision on set. | `/shot-list script.md` |
 
-## Installation
+Installed as a plugin, each command is prefixed: `/edit-reel:trim-raw-video`, and so on.
 
-### Prerequisites
-
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-- Python 3.10+
-- ffmpeg (`brew install ffmpeg` on macOS, `choco install ffmpeg` on Windows)
-- [Manrope font](https://fonts.google.com/specimen/Manrope) installed (Bold weight required)
-
-### Option 1: ClawHub (recommended)
-
-```bash
-npm i -g clawhub
-clawhub install edit-greek-reel
-```
-
-> **Note:** ClawHub may not include the bundled SFX audio files. The skill will automatically download them from this repository on first run if they're missing.
-
-### Option 2: Manual
-
-```bash
-git clone https://github.com/artemisln/edit-greek-reel.git
-cp -r edit-greek-reel ~/.claude/skills/edit-greek-reel
-```
-
-### Python dependencies
-
-```bash
-pip install openai-whisper Pillow cairosvg
-```
-
-> **Note:** The Whisper medium model (~1.5 GB) will be downloaded automatically on first use. This may take a few minutes depending on your connection.
-
-## Usage
-
-In Claude Code, run:
+### edit-reel options
 
 ```
-/edit-greek-reel ~/path/to/your/raw_video.MOV
+/edit-reel ~/video.MOV --lang el              # language: en, el, es, fr, de, ... (asks if missing)
+/edit-reel ~/video.MOV --crop-top 20          # crop 20% from the top
+/edit-reel ~/video.MOV --no-images            # skip image overlays
+/edit-reel ~/video.MOV --manual-text "..."    # use your own script instead of Whisper
 ```
 
-### Options
+### Sound effects
+
+21 SFX ship with the skill: 6 from v1 (whoosh, cash, fah, click, bubble pop, riser) and 15
+generated ones (pop, swish, thock, thud, sub drop, shimmer, rise, ding, success, fanfare, buzzer,
+alert, undo, tick, swoop up). The skill picks them by meaning and never repeats one in a video.
+To use your own, drop `.mp3` files into an `audios/` folder next to your video.
+
+The generated sounds come from `plugins/edit-reel/skills/edit-reel/scripts/make-sfx.py`
+(standard library plus ffmpeg) and are CC0. See [CREDITS.md](CREDITS.md).
+
+### Image overlays
+
+Put logos, screenshots or memes in an `images/` folder next to your video, named after what they
+show (`cursor.png`, `github_copilot.png`). The skill overlays one when you mention it. If you keep
+one asset library for all your videos, tell Claude its path.
+
+## How edit-reel works
+
+1. **Trim, crop, scale** (ffmpeg): cuts silence and retakes, crops to 9:16 without stretching, scales to 1080x1920.
+2. **Subtitles, zooms, images** (Python and Pillow, frame by frame): word-by-word highlight in Manrope Bold, eased 1.08–1.10x zooms, pop-in overlays.
+3. **SFX mix** (ffmpeg): sound effects on key words at 0.15–0.20 volume, under the voice.
+
+Subtitle style: Manrope Bold 72px, white with a black outline, active word in gold, 2 words per
+line, sentence case.
+
+## Repo layout
 
 ```
-/edit-greek-reel ~/video.MOV --lang en              # Set language (en, el, es, fr, de, etc.)
-/edit-greek-reel ~/video.MOV --crop-top 20          # Crop 20% from the top
-/edit-greek-reel ~/video.MOV --no-images            # Skip image overlays
-/edit-greek-reel ~/video.MOV --manual-text "..."    # Use your own script text instead of Whisper
-```
-
-If `--lang` is not specified, the skill will ask which language your video is in before transcribing.
-
-### Adding custom SFX
-
-Drop `.mp3` files into an `audios/` folder next to your video. The skill will auto-detect and trim leading silence from them.
-
-The skill ships with 6 bundled SFX:
-- `trimmed_whoosh.mp3` — transitions, reveals
-- `trimmed_cash.mp3` — money/price mentions
-- `trimmed_fah.mp3` — emphasis, strong statements
-- `trimmed_click.mp3` — tool mentions
-- `trimmed_bubble_pop.mp3` — light reveals
-- `trimmed_riser.mp3` — builds, anticipation
-
-### Adding image overlays
-
-Create an `images/` folder next to your video and add logos/screenshots/memes as `.png`, `.webp`, or `.svg` files. Name them after what they represent (e.g., `cursor.png`, `github_copilot.png`). The skill will overlay them when you mention the corresponding tool.
-
-## How it works
-
-### 3-Pass Pipeline
-
-1. **Pass 1: Trim + Crop + Scale** (ffmpeg)
-   - Cuts silence gaps and retakes
-   - Crops to 9:16 ratio (object-cover style)
-   - Scales to 1080x1920
-
-2. **Pass 2: Subtitles + Zoom + Images** (Python/Pillow, frame-by-frame)
-   - Renders karaoke subtitles with word-by-word highlighting
-   - Applies smooth zoom effects with ease-in/ease-out
-   - Composites image overlays with pop-in/pop-out animation
-
-3. **Pass 3: Mix SFX** (ffmpeg)
-   - Layers sound effects at precise timestamps
-   - Never repeats the same SFX in one video
-
-### Subtitle Style
-
-- Font: Manrope Bold, 72px
-- Inactive words: White with black outline
-- Active word: Gold/Yellow highlight
-- No background pill — outline only
-- 2 words per line (always fits on screen)
-- Sentence case (never ALL CAPS)
-
-## File Structure
-
-```
-edit-greek-reel/
-  skill.md          # The Claude Code skill definition
-  audios/           # Bundled sound effects
-    trimmed_whoosh.mp3
-    trimmed_cash.mp3
-    trimmed_fah.mp3
-    trimmed_click.mp3
-    trimmed_bubble_pop.mp3
-    trimmed_riser.mp3
-  README.md         # This file
+.claude-plugin/marketplace.json      makes the repo installable from GitHub
+plugins/edit-reel/
+  .claude-plugin/plugin.json
+  skills/
+    edit-reel/          SKILL.md, audios/, scripts/make-sfx.py
+    trim-raw-video/
+    playback-capture/
+    demo-reel-capture/
+    sponsored-reel/
+    shot-list/
 ```
 
 ## Tips
 
-- Record in **portrait mode** (9:16) for best results
-- Speak naturally — the skill handles retakes and pauses
-- If Whisper gets a word wrong, the skill will ask you before proceeding
-- For best subtitle timing, speak clearly with brief pauses between sentences
-- Add tool logos to `images/` if you're reviewing or mentioning specific tools
+- Film in portrait (9:16).
+- Speak naturally: retakes and pauses get cut.
+- If Whisper mishears a word, the skill asks before rendering.
+- Brand and tool names get proofread ("Cloud Code" becomes "Claude Code").
 
 ## Credits
 
-Built by [Artemis Codes](https://instagram.com/artemis.codes) using Claude Code.
+Built by [Artemis Codes](https://instagram.com/artemis.codes) with Claude Code.
+Thanks to [@Nonilas](https://github.com/Nonilas) for the language flag and SFX fixes in v1.
+Sound sources in [CREDITS.md](CREDITS.md).
 
 ## License
 
-MIT — use it however you want.
+MIT, see [LICENSE](LICENSE). Generated sounds are CC0.
